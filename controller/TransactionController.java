@@ -21,7 +21,7 @@ public class TransactionController {
         this.transactionService = transactionService;
     }
 
-    @PostMapping("/Transaction")
+    @PostMapping
     public ResponseEntity<Transaction> createTransaction(@RequestBody CreateTransactionRequest request){
        Transaction transaction = transactionService.createTransaction(
                 request.sourceId(),
@@ -36,24 +36,44 @@ public class TransactionController {
     public ResponseEntity<List<GetTransactionsResponse>> myTransactions (@PathVariable UUID id){
         List<Transaction> transactions = transactionService.getAllTransaction(id);
 
-            List<GetTransactionsResponse> responses = transactions.stream()
-                    .map(transaction -> new GetTransactionsResponse(
-                    transaction.getSourceAccount().getId(),
-                    transaction.getTargetAccount().getId(),
-                    transaction.getAmount(),
-                    transaction.getTimestamp()
-                    )
-            ).toList();
+        List<GetTransactionsResponse> responses = transactions.stream()
+                .map(transaction -> new GetTransactionsResponse(
+                transaction.getSourceAccount().getId(),
+                transaction.getTargetAccount().getId(),
+                transaction.getAmount(),
+                transaction.getTimestamp()
+                )
+        ).toList();
         return ResponseEntity.accepted().body(responses);
     }
 
     @GetMapping("/mySentTransactions/{id}")
-    public ResponseEntity<List<Transaction>> myTransactions (){
+    public ResponseEntity<List<GetTransactionsResponse>> mySentTransactions (@PathVariable UUID id){
+        List<Transaction> transactions = transactionService.getTransactionsSent(id);
 
+        List<GetTransactionsResponse> responses = transactions.stream()
+                .map(tran-> new GetTransactionsResponse(
+                        tran.getSourceAccount().getId(),
+                        tran.getTargetAccount().getId(),
+                        tran.getAmount(),
+                        tran.getTimestamp()
+                )
+        ).toList();
+        return ResponseEntity.accepted().body(responses);
     }
 
     @GetMapping("/myReceivedTransactions/{id}")
-    public ResponseEntity<List<Transaction>> myTransactions (){
+    public ResponseEntity<List<GetTransactionsResponse>> myReceivedTransactions (@PathVariable UUID id){
+        List<Transaction> transactions = transactionService.getTransactionReceived(id);
 
+        List<GetTransactionsResponse> responses = transactions.stream()
+                .map(tran-> new GetTransactionsResponse(
+                                tran.getSourceAccount().getId(),
+                                tran.getTargetAccount().getId(),
+                                tran.getAmount(),
+                                tran.getTimestamp()
+                        )
+                ).toList();
+        return ResponseEntity.accepted().body(responses);
     }
 }

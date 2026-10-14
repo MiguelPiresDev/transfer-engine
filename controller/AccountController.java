@@ -20,7 +20,7 @@ public class AccountController {
         this.accountService = service;
     }
 
-    @PostMapping("/createAccount")
+    @PostMapping
     public ResponseEntity<Account> createAccount(@RequestBody CreateAccountRequest request){
         Account account = accountService.createAccount(
             request.holderName(),
@@ -29,7 +29,7 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 
-    @GetMapping("/getAccount/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<GetAccountResponse> getAccount(@PathVariable UUID id){
         Account account = accountService.getAccount(id);
 
@@ -41,9 +41,9 @@ public class AccountController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/deleteAccount")
-    public ResponseEntity<java.lang.String> deleteAccount(UUID id){
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteAccount(@PathVariable UUID id){
         accountService.deleteAccount(id);
-        return ResponseEntity.ok("Account deleted");
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }
